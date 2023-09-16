@@ -21,6 +21,9 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
+    /**
+     * securityFilterChain is a function Bean for initilize security configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 

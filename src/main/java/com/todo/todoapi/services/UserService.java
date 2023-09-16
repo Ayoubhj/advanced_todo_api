@@ -1,12 +1,11 @@
 package com.todo.todoapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todo.todoapi.DTO.AuthenticationResponse;
-import com.todo.todoapi.DTO.Login;
-import com.todo.todoapi.DTO.Register;
+import com.todo.todoapi.dto.AuthenticationResponse;
+import com.todo.todoapi.dto.Login;
+import com.todo.todoapi.dto.Register;
 import com.todo.todoapi.entities.Token;
 import com.todo.todoapi.entities.User;
-import com.todo.todoapi.enums.Role;
 import com.todo.todoapi.enums.TokenType;
 import com.todo.todoapi.repositories.TokenRepository;
 import com.todo.todoapi.repositories.UserRepository;
@@ -14,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +30,10 @@ public class UserService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
-    
+
+    /**
+     * register function for create new user and token for access
+     */
     public AuthenticationResponse login(Login request) {
 
         authenticationManager.authenticate(
@@ -52,6 +52,9 @@ public class UserService {
 
     }
 
+    /**
+     * login function for create token for user
+     */
     public AuthenticationResponse register(Register request) {
 
         var user = User.builder()
@@ -80,6 +83,9 @@ public class UserService {
 
     }
 
+    /**
+     * saveUserToken is a function  for save token user into database
+     */
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -91,6 +97,9 @@ public class UserService {
         tokenRepository.save(token);
     }
 
+    /**
+     * revokeAllUserTokens is a function  for revoke all user token
+     */
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
         if (validUserTokens.isEmpty())
@@ -102,6 +111,9 @@ public class UserService {
         tokenRepository.saveAll(validUserTokens);
     }
 
+    /**
+     * refreshToken function for create new token from refresh token
+     */
     public void refreshToken(
             HttpServletRequest request,
             HttpServletResponse response

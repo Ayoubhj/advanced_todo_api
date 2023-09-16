@@ -1,4 +1,4 @@
-package com.todo.todoapi.DTO;
+package com.todo.todoapi.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-    private Long userId;
+public class Login {
     private String email;
-    private String phone;
-    private String firstName;
-    private String lastName;
+    private String password;
 }
-

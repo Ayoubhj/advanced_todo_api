@@ -20,22 +20,37 @@ public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
+
+    /**
+     * userDetailsService is a function Bean for check user if exist in database
+     */
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    /**
+     * passwordEncoder is a function Bean for encoding password
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+
+
+    /**
+     * authenticationManager is a function Bean for handling authentication
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws  Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * authenticationProvider is a function Bean for initilize providers for authentication
+     */
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();

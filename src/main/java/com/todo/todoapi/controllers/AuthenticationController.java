@@ -1,9 +1,9 @@
 package com.todo.todoapi.controllers;
 
 
-import com.todo.todoapi.DTO.AuthenticationResponse;
-import com.todo.todoapi.DTO.Login;
-import com.todo.todoapi.DTO.Register;
+import com.todo.todoapi.dto.AuthenticationResponse;
+import com.todo.todoapi.dto.Login;
+import com.todo.todoapi.dto.Register;
 import com.todo.todoapi.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,12 +25,20 @@ public class AuthenticationController {
 
     private final UserService userService;
 
+    /**
+     * register function for create new user and token for access
+     */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @Valid @RequestBody Register request
     ){
        return ResponseEntity.ok(userService.register(request));
     }
+
+
+    /**
+     * login function for create token for user
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
             @Valid @RequestBody Login request
@@ -39,6 +47,9 @@ public class AuthenticationController {
     }
 
 
+    /**
+     * refreshToken function for create new token from refresh token
+     */
     @PostMapping("/refresh-token")
     public void refreshToken(
             HttpServletRequest request,

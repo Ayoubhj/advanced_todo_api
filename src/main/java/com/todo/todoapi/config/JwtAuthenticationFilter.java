@@ -26,8 +26,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
 
+
+    /**
+     * doFilterInternal execute once you send request for check if token valid
+     */
     @Override
-    protected void doFilterInternal(@Nullable HttpServletRequest request,@Nullable HttpServletResponse response,@Nullable FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal( HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;

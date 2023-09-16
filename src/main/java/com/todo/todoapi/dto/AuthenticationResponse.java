@@ -1,4 +1,4 @@
-package com.todo.todoapi.DTO;
+package com.todo.todoapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.todo.todoapi.entities.User;
