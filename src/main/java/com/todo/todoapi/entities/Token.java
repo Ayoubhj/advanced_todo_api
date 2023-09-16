@@ -1,6 +1,7 @@
 package com.todo.todoapi.entities;
 
 import com.todo.todoapi.enums.TokenType;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
