@@ -116,6 +116,7 @@ public class JwtService {
      * extractAllClaims is a function  for extract  all claims
      */
     private Claims extractAllClaims(String token) {
+
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())

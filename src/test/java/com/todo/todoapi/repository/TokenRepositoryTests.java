@@ -27,7 +27,7 @@ public class TokenRepositoryTests {
     private Token token;
     private User user;
     @BeforeEach
-    public void init(){
+    private void init(){
         user = User.builder().role(Role.ROLE_USER).email("ayoub@gmail.com").firstName("ayoub").lastName("hajouj").phone("0632736325").password("123456789").build();
         token = Token.builder().token("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiO").user(user).expired(false).revoked(false).build();
     }

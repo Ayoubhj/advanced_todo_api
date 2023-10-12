@@ -9,12 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-    private Long userId;
-    private String email;
-    private String phone;
-    private String firstName;
-    private String lastName;
-    private String image;
+public class PasswordChange {
+    private String oldPassword;
+    private String  newPassword;
 }
-

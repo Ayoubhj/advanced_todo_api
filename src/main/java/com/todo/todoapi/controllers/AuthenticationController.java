@@ -1,20 +1,17 @@
 package com.todo.todoapi.controllers;
 
 
-import com.todo.todoapi.dto.AuthenticationResponse;
-import com.todo.todoapi.dto.Login;
-import com.todo.todoapi.dto.Register;
+import com.todo.todoapi.dto.*;
+import com.todo.todoapi.entities.User;
 import com.todo.todoapi.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -29,8 +26,9 @@ public class AuthenticationController {
      * register function for create new user and token for access
      */
     @PostMapping("/register")
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
     public ResponseEntity<AuthenticationResponse> register(
-            @Valid @RequestBody Register request
+             @RequestBody @Valid Register request
     ){
        return ResponseEntity.ok(userService.register(request));
     }
@@ -41,7 +39,7 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(
-            @Valid @RequestBody Login request
+             @RequestBody @Valid  Login request
     ){
         return ResponseEntity.ok(userService.login(request));
     }
@@ -51,10 +49,10 @@ public class AuthenticationController {
      * refreshToken function for create new token from refresh token
      */
     @PostMapping("/refresh-token")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        userService.refreshToken(request, response);
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody Token token)  {
+        return ResponseEntity.ok(userService.refreshToken(token));
     }
+
+
+
 }

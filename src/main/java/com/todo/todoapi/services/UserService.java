@@ -1,9 +1,7 @@
 package com.todo.todoapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todo.todoapi.dto.AuthenticationResponse;
-import com.todo.todoapi.dto.Login;
-import com.todo.todoapi.dto.Register;
+import com.todo.todoapi.dto.*;
 import com.todo.todoapi.entities.Token;
 import com.todo.todoapi.entities.User;
 import com.todo.todoapi.enums.TokenType;
@@ -15,11 +13,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +57,7 @@ public class UserService {
     /**
      * login function for create token for user
      */
-    public AuthenticationResponse register(Register request) {
+    public AuthenticationResponse register( Register request) {
 
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -64,6 +66,7 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .role(request.getRole())
+                .image(request.getImage())
                 .build();
 
 
@@ -114,32 +117,67 @@ public class UserService {
     /**
      * refreshToken function for create new token from refresh token
      */
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+    public AuthenticationResponse refreshToken(com.todo.todoapi.dto.Token token){
+        String userEmail;
+        if (token.getToken() == null ) {
+            return null;
         }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
+        userEmail = jwtService.extractUsername(token.getToken());
         if (userEmail != null) {
             var user = this.userRepository.findByEmail(userEmail)
                     .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
+            if (jwtService.isTokenValid(token.getToken(), user)) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
                 var authResponse = AuthenticationResponse.builder()
                         .accessToken(accessToken)
-                        .refreshToken(refreshToken)
+                        .refreshToken(token.getToken())
+                        .user(user)
                         .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+                return authResponse;
             }
         }
+        return null;
+    }
+
+    public User getConnectedUser() {
+       return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    public User updateImage(ImageBase64 image,Long id) {
+        User user = userRepository.findById(id).orElseThrow();
+        if(Objects.isNull(user)){
+            return null;
+        }
+        user.setImage(image.getImage());
+        userRepository.save(user);
+        return user;
+    }
+
+    public User updateUser(UserDto user) {
+        User userExit = userRepository.findById(user.getUserId()).orElseThrow();
+        if(Objects.isNull(userExit)){
+            return null;
+        }
+        userExit.setFirstName(user.getFirstName());
+        userExit.setLastName(user.getLastName());
+        userExit.setEmail(user.getEmail());
+        userExit.setPhone(user.getPhone());
+        userRepository.save(userExit);
+        return userExit;
+    }
+
+    public User updatePassword(PasswordChange change, Long id) {
+        User userExit = userRepository.findById(id).orElseThrow();
+        if(Objects.isNull(userExit)){
+            return null;
+        }
+        if(!passwordEncoder.matches(change.getOldPassword(),userExit.getPassword())){
+            return null;
+        }
+        userExit.setPassword(passwordEncoder.encode(change.getNewPassword()));
+        userRepository.save(userExit);
+        return userExit;
     }
 
 

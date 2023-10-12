@@ -1,15 +1,12 @@
 package com.todo.todoapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todo.todoapi.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,52 +22,58 @@ public class User extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
-    @NotBlank
-    @Size(max = 50,min = 3)
     private String firstName;
-    @NotBlank
-    @Size(max = 50,min = 3)
+
     private String lastName;
 
-    @NotBlank
-    @Email
     private String email;
 
-    @NotBlank()
-    @Size(min = 8 ,max = 120)
+    @JsonIgnore
     private String password;
 
-
-    @Size(min = 9 ,max = 50)
     private String phone;
+
+    @Lob
+    @Column(name = "image", columnDefinition="LONGTEXT")
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+
 
     @Override
     public String getUsername() {
         return email;
     }
 
+
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
+    @JsonIgnore
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
