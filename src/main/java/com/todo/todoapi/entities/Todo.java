@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.UUID;
 
@@ -18,6 +21,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(indexName = "todo")
 public class Todo extends BaseEntity{
 
     @Id
@@ -25,17 +29,22 @@ public class Todo extends BaseEntity{
     @GenericGenerator(name = "uuid-hibernate-generator", strategy = "org.hibernate.id.UUIDGenerator")
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(columnDefinition = "VARCHAR(36)")
+
     private UUID id;
 
+    @Field(type = FieldType.Text, includeInParent = true)
     private String title;
 
     @Lob
+    @Field(type = FieldType.Text, includeInParent = true)
     private String descreption;
 
+    @Field(type = FieldType.Integer, includeInParent = true)
     private int isDone = 0;
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
+    @Field(type = FieldType.Nested, includeInParent = true)
     private User user;
 
 

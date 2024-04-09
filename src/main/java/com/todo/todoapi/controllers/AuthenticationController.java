@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
 
@@ -30,7 +32,9 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
              @RequestBody @Valid Register request
     ){
-       return ResponseEntity.ok(userService.register(request));
+        AuthenticationResponse response = userService.register(request);
+        log.info("user is register {}",response.getUser().getUsername());
+       return ResponseEntity.ok(response);
     }
 
 
@@ -41,7 +45,9 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> login(
              @RequestBody @Valid  Login request
     ){
-        return ResponseEntity.ok(userService.login(request));
+        AuthenticationResponse response = userService.login(request);
+        log.info("user is logged in {}",response.getUser().getUsername());
+        return ResponseEntity.ok(response);
     }
 
 

@@ -6,6 +6,7 @@ import com.todo.todoapi.dto.UserDto;
 import com.todo.todoapi.entities.User;
 import com.todo.todoapi.services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

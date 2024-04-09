@@ -6,6 +6,7 @@ import com.todo.todoapi.entities.Todo;
 import com.todo.todoapi.services.TodoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/todo")
 @RequiredArgsConstructor
+@Slf4j
 public class TodoController {
 
     private final TodoService todoService;
@@ -43,9 +45,11 @@ public class TodoController {
         Todo todo  = todoService.createTodo(todoRequest);
 
         if(todo == null){
+            log.info("there is a conflict ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
+        log.info("todo created successfully");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -55,9 +59,11 @@ public class TodoController {
         Todo todo  = todoService.updateTodo(todoRequest,id);
 
         if(todo == null){
+            log.info("todo not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        log.info("todo updated successfully");
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
@@ -67,9 +73,11 @@ public class TodoController {
         Todo todo  = todoService.deleteTodo(id);
 
         if(todo == null){
+            log.info("todo not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        log.info("todo deleted successfully");
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

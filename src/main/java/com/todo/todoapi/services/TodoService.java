@@ -2,6 +2,7 @@ package com.todo.todoapi.services;
 
 import com.todo.todoapi.dto.Search;
 import com.todo.todoapi.dto.TodoRequest;
+import com.todo.todoapi.elasticRepositories.ElasticTodoRepository;
 import com.todo.todoapi.entities.Todo;
 import com.todo.todoapi.entities.User;
 import com.todo.todoapi.repositories.TodoRepository;
@@ -22,6 +23,7 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final UserService userService;
+    private final ElasticTodoRepository elasticTodoRepository;
 
 
 
@@ -41,7 +43,7 @@ public class TodoService {
         var todo = Todo.builder().title(todoRequest.getTitle()).descreption(todoRequest.getDescreption()).user(userService.getConnectedUser()).build();
 
         todoRepository.save(todo);
-
+        elasticTodoRepository.save(todo);
         return todo;
 
     }
@@ -53,6 +55,7 @@ public class TodoService {
         if(todo.isPresent()){
             Todo current = todo.get();
             current.setIsDone(state);
+            elasticTodoRepository.save(current);
             return todoRepository.save(current);
 
         }
@@ -70,7 +73,7 @@ public class TodoService {
         todo.setDescreption(todoRequest.getDescreption());
 
         todoRepository.save(todo);
-
+        elasticTodoRepository.save(todo);
         return  todo;
 
     }
@@ -82,6 +85,7 @@ public class TodoService {
         if (todo.isPresent()) {
 
             todoRepository.deleteById(id);
+            elasticTodoRepository.deleteById(id);
             return todo.get();
 
         } else {
